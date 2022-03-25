@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  # !! Does not save (mongodb) data !!
+  # As such, no data will be saved!
+  # This is fine for small installations that use the default API + language
+  mongo:
+    image: mongo
+    restart: always
+
+  voicy:
+    image: ghcr.io/entrixiii/voicy-docker:main
+    restart: always
+    environment:
+      MONGO: mongodb://mongo:27017/voicy
+    # See .env.sample for example
+    # Remove MONGO from .env because it already links to mongo container
+    env_file: ".env"
