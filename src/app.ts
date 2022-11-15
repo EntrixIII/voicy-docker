@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv'
 dotenv.config({ path: `${__dirname}/../.env` })
 // Dependencies
 import { run } from '@grammyjs/runner'
+import { webhookApp } from '@/helpers/startWebhook'
 import Cluster from '@/helpers/Cluster'
 import attachChat from '@/middlewares/attachChat'
 import bot from '@/helpers/bot'
@@ -21,12 +22,14 @@ import engines from '@/engines'
 import handleAddPromoException from '@/commands/handleAddPromoException'
 import handleAudio from '@/handlers/handleAudio'
 import handleDisableGoogle from '@/commands/handleDisableGoogle'
+import handleDonate from '@/commands/handleDonate'
 import handleEnableGoogle from '@/commands/handleEnableGoogle'
 import handleEngine from '@/commands/handleEngine'
 import handleFiles from '@/commands/handleFiles'
 import handleGeeky from '@/commands/handleGeeky'
 import handleGoogle from '@/commands/handleGoogle'
 import handleHelp from '@/commands/handleHelp'
+import handleId from '@/commands/handleId'
 import handleL from '@/commands/handleL'
 import handleLanguage from '@/commands/handleLanguage'
 import handleLock from '@/commands/handleLock'
@@ -68,6 +71,8 @@ async function runApp() {
     handleAudio
   )
   // Commands
+  bot.command('id', handleId)
+  bot.command('donate', handleDonate)
   bot.command('start', checkAdminLock, handleStart)
   bot.command('help', checkAdminLock, handleHelp)
   bot.command('lock', disallowPrivate, checkAdminLock, handleLock)
@@ -95,6 +100,8 @@ async function runApp() {
   await bot.init()
   run(bot)
   console.info(`Bot ${bot.botInfo.username} is up and running`)
+  // Start webhook app
+  webhookApp.listen(4242, () => console.log('Running on port 4242'))
 }
 
 if (Cluster.isPrimary) {
